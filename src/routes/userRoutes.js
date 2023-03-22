@@ -18,9 +18,13 @@ router.post("/test/mail", async (req, res) => {
     },
   });
   ejs.renderFile(
-    "emails/verifyEmail.ejs",
+    "public/noti.ejs",
     {
       link: "1234.com",
+      title: "Reset Your Password",
+      sub: "We received a request to reset your password. Don’t worry,we are here to help you.",
+      btn: "Reset My Password",
+      warning: "Didn’t request a password reset?",
     },
     (err, str) => {
       if (err) {

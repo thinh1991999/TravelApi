@@ -28,7 +28,6 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
-
 app.use(cors());
 app.set("view engine", "ejs");
 app.use(
@@ -36,7 +35,9 @@ app.use(
     extended: true,
   })
 );
+console.log(express.static(__dirname + "emails/images"));
 app.use(bodyParser.json());
+app.use("/images", express.static("public/images"));
 app.get("/", function (req, res) {
   return res.send("Hello GET");
 });
