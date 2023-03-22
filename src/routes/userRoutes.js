@@ -28,6 +28,7 @@ router.post("/test/mail", async (req, res) => {
     },
     (err, str) => {
       if (err) {
+        console.log(err);
         return res.status(400).send({
           err,
         });
@@ -47,6 +48,7 @@ router.post("/test/mail", async (req, res) => {
             });
           })
           .catch((err) => {
+            console.log(err);
             return res.status(400).send({
               err,
             });
@@ -116,9 +118,13 @@ router.post(
               },
             });
             ejs.renderFile(
-              "emails/verifyEmail.ejs",
+              "public/noti.ejs",
               {
                 link: `${process.env.CLIENT_URL}authen/verify/?token=${token}`,
+                title: "Verify Your Email",
+                sub: "We received a request to verify your email. Don’t worry,we are here to help you.",
+                btn: "VERIFY MY EMAIL",
+                warning: "Didn’t request a email verify?",
               },
               (err, str) => {
                 if (err) {
@@ -243,9 +249,13 @@ router.post("/user/forgot/pw", async (req, res) => {
         });
         const link = `${process.env.CLIENT_URL}authen/reset-pw/?token=${token}`;
         ejs.renderFile(
-          "emails/resetPw.ejs",
+          "public/noti.ejs",
           {
             link,
+            title: "Reset Your Password",
+            sub: "We received a request to reset your password. Don’t worry,we are here to help you.",
+            btn: "RESET MY PASSWORD",
+            warning: "Didn’t request a password reset?",
           },
           (err, str) => {
             if (err) {
