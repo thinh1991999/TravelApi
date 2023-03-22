@@ -2,7 +2,7 @@ const express = require("express");
 const { authAdmin } = require("../middlewares/auth");
 const { multerUploads, uploadToStorage } = require("../middlewares/multer");
 const Amenity = require("../models/Amenity");
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 
 const amenityRoutes = express.Router();
 
@@ -51,7 +51,7 @@ amenityRoutes.get("/amenity/all", async (req, res) => {
 amenityRoutes.get("/amenity/detail", async (req, res) => {
   try {
     const id = req.query.id;
-    if (mongoose.Types.ObjectId.isValid(id)) {
+    if (mongoose.isValidObjectId(id)) {
       Amenity.findById(id)
         .exec()
         .then((amenity) => {

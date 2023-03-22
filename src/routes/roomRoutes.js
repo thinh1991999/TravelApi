@@ -101,7 +101,7 @@ router.post(
 router.get("/room", async (req, res) => {
   try {
     const id = req.query.id;
-    if (mongoose.Types.ObjectId.isValid(id)) {
+    if (mongoose.isValidObjectId(id)) {
       Room.findById({
         _id: id,
       })

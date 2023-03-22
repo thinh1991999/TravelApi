@@ -7,7 +7,6 @@ const { multerUploads, uploadToStorage } = require("../middlewares/multer");
 const nodemailer = require("nodemailer");
 const ejs = require("ejs");
 const router = express.Router();
-const argon2 = require("argon2");
 const bcrypt = require("bcryptjs");
 
 router.post("/test/mail", async (req, res) => {
@@ -512,59 +511,5 @@ router.put(
     }
   }
 );
-
-// router.post("/users/reset-pw", async (req, res) => {
-//   // Log user out of the application
-//   try {
-//     const { resetLink, newPw } = req.body;
-//     if (resetLink) {
-//       if (newPw && newPw.trim().length >= 7) {
-//         jwt.verify(
-//           resetLink,
-//           process.env.RESET_PASSWORD_KEY,
-//           async (err, result) => {
-//             if (err) {
-//               return res.status(400).send({
-//                 error: "Link đã hết hạn hoặc không tồn tại",
-//               });
-//             } else {
-//               const { _id } = result;
-//               const obj = {
-//                 password: await bcrypt.hash(newPw, 8),
-//                 resetPwLink: "",
-//               };
-//               User.findOneAndUpdate(
-//                 { resetPwLink: resetLink },
-//                 obj,
-//                 { runValidators: true },
-//                 (err, user) => {
-//                   if (err || !user) {
-//                     return res.status(400).send({
-//                       error: "Link đã hết hạn hoặc không tồn tại",
-//                     });
-//                   } else {
-//                     return res.status(200).send({
-//                       mess: "Đặt lại mật khẩu thành công",
-//                     });
-//                   }
-//                 }
-//               );
-//             }
-//           }
-//         );
-//       } else {
-//         return res.status(400).send({
-//           error: "Mật khẩu không đủ điều kiện, vui lòng tạo lại",
-//         });
-//       }
-//     } else {
-//       return res.status(400).send({
-//         error: "Có lỗi xảy ra, vui lòng thử lại",
-//       });
-//     }
-//   } catch (error) {
-//     return res.status(500).send(error);
-//   }
-// });
 
 module.exports = router;

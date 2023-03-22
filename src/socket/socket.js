@@ -1,6 +1,4 @@
-const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
-const { Server } = require("socket.io");
 const User = require("../models/User");
 
 const startSocket = (io) => {

@@ -3,7 +3,7 @@ const User = require("../models/User");
 const { auth } = require("../middlewares/auth");
 const Review = require("../models/Review");
 const { check, validationResult } = require("express-validator");
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 const Room = require("../models/Room");
 const reviewRoutes = express.Router();
 
@@ -79,7 +79,7 @@ reviewRoutes.put(
         return res.status(400).send({ errors: errors.array() });
       }
       const id = req.query.id;
-      if (mongoose.Types.ObjectId.isValid(id)) {
+      if (mongoose.isValidObjectId(id)) {
         const { rating, description } = req.body;
         Review.findOneAndUpdate(
           {
@@ -123,8 +123,7 @@ reviewRoutes.put(
 reviewRoutes.delete("/review/delete", auth, async (req, res) => {
   try {
     const id = req.query.id;
-    if (mongoose.Types.ObjectId.isValid(id)) {
-      const { rating, description } = req.body;
+    if (mongoose.isValidObjectId(id)) {
       Review.findOneAndDelete({
         _id: id,
         owner: req.user._id,
@@ -171,7 +170,7 @@ reviewRoutes.delete("/review/delete", auth, async (req, res) => {
 reviewRoutes.post("/review/like", auth, async (req, res) => {
   try {
     const id = req.query.id;
-    if (mongoose.Types.ObjectId.isValid(id)) {
+    if (mongoose.isValidObjectId(id)) {
       Review.findOne({
         _id: id,
         likes: { $ne: req.user._id },
@@ -220,7 +219,7 @@ reviewRoutes.post("/review/like", auth, async (req, res) => {
 reviewRoutes.post("/review/dislike", auth, async (req, res) => {
   try {
     const id = req.query.id;
-    if (mongoose.Types.ObjectId.isValid(id)) {
+    if (mongoose.isValidObjectId(id)) {
       Review.findOne({
         _id: id,
         dislikes: { $ne: req.user._id },
@@ -283,7 +282,7 @@ const options = {
 reviewRoutes.get("/review/all", async (req, res) => {
   try {
     const id = req.query.id;
-    if (mongoose.Types.ObjectId.isValid(id)) {
+    if (mongoose.isValidObjectId(id)) {
       Review.paginate({ room: id }, options, function (err, result) {
         return res.status(200).send({
           err,

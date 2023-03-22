@@ -2,7 +2,7 @@ const express = require("express");
 const { authAdmin } = require("../middlewares/auth");
 const { multerUploads, uploadToStorage } = require("../middlewares/multer");
 const Category = require("../models/Category");
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 
 const categoryRoutes = express.Router();
 
@@ -52,7 +52,7 @@ categoryRoutes.put(
         });
       }
       const id = req.query.id;
-      if (mongoose.Types.ObjectId.isValid(id)) {
+      if (mongoose.isValidObjectId(id)) {
         Category.findByIdAndUpdate(id, {
           name,
           description,
