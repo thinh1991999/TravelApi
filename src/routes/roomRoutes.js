@@ -25,6 +25,7 @@ router.post(
     check("longitude", "longitude field is required").not().isEmpty(),
     check("address", "address field is required").not().isEmpty(),
     check("propertyType", "propertyType field is required").not().isEmpty(),
+    check("placeType", "placeType field is required").not().isEmpty(),
     check("guests", "guests field is required").not().isEmpty(),
     check("bedrooms", "bedrooms field is required").not().isEmpty(),
     check("beds", "beds field is required").not().isEmpty(),
@@ -53,6 +54,7 @@ router.post(
         locationY,
         address,
         propertyType,
+        placeType,
         guests,
         bedrooms,
         beds,
@@ -71,6 +73,7 @@ router.post(
           address,
         },
         propertyType,
+        placeType,
         guests,
         bedrooms,
         beds,
@@ -179,7 +182,7 @@ router.get("/room/filter/count", async (req, res) => {
     let find = {};
     const {
       minPrice = 0,
-      maxPrice = 1000,
+      maxPrice = 100000000,
       bathRooms = "ALL",
       bedRooms = "ALL",
       beds = "ALL",
@@ -232,7 +235,7 @@ router.get("/room/filter", async (req, res) => {
     let find = {};
     const {
       minPrice = 0,
-      maxPrice = 1000,
+      maxPrice = 100000000,
       bathRooms = "ALL",
       bedRooms = "ALL",
       beds = "ALL",

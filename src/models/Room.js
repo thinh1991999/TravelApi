@@ -33,6 +33,12 @@ const roomSchema = new mongoose.Schema(
         trim: true,
       },
     },
+    categories: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+      },
+    ],
     placeType: [
       {
         type: mongoose.Schema.Types.ObjectId,
