@@ -105,9 +105,7 @@ router.get("/room", async (req, res) => {
   try {
     const id = req.query.id;
     if (mongoose.isValidObjectId(id)) {
-      Room.findById({
-        _id: id,
-      })
+      Room.findById(id)
         .populate("propertyType")
         .exec()
         .then((room) => {
@@ -136,6 +134,32 @@ router.get("/room", async (req, res) => {
                   });
                 }
               });
+          } else {
+            return res.status(401).send({
+              error: "Room not found",
+            });
+          }
+        });
+    } else {
+      return res.status(401).send({ error: "Invalid id" });
+    }
+  } catch (error) {
+    return res.status(401).send({ error: error.message });
+  }
+});
+
+// Get detail room admin
+router.get("/room/admin", async (req, res) => {
+  try {
+    const id = req.query.id;
+    if (mongoose.isValidObjectId(id)) {
+      Room.findById(id)
+        .exec()
+        .then((room) => {
+          if (room) {
+            return res.status(200).send({
+              room,
+            });
           } else {
             return res.status(401).send({
               error: "Room not found",
