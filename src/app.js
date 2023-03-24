@@ -13,6 +13,8 @@ const adminRoutes = require("./routes/adminRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const propertyTypeRoutes = require("./routes/propertyTypeRoutes");
 const typePlaceRoutes = require("./routes/typePlaceRoutes");
+const checkoutRouters = require("./routes/checkoutRoutes");
+
 const { connectDb } = require("./config/db");
 const startSocket = require("./socket/socket");
 
@@ -50,6 +52,7 @@ app.use(adminRoutes);
 app.use(reviewRoutes);
 app.use(propertyTypeRoutes);
 app.use(typePlaceRoutes);
+app.use(checkoutRouters);
 
 startSocket(io);
 server.listen(port, () => {

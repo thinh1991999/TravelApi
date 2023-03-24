@@ -24,6 +24,7 @@
     "express-validator": "^6.15.0",
     "jsonwebtoken": "^8.5.1",
     "mailgun-js": "^0.22.0",
+    "moment": "^2.29.4",
     "mongodb": "^5.1.0",
     "mongoose": "^5.13.16",
     "mongoose-paginate-v2": "^1.7.1",
