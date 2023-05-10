@@ -100,6 +100,101 @@ router.post(
   }
 );
 
+// Update a new room
+router.put(
+  "/room/update",
+  auth,
+  [
+    check("name", "name field is required").not().isEmpty(),
+    check("description", "description field is required").not().isEmpty(),
+    check("pricePerNight", "pricePerNight field is required").not().isEmpty(),
+    check("latitude", "latitude field is required").not().isEmpty(),
+    check("longitude", "longitude field is required").not().isEmpty(),
+    check("address", "address field is required").not().isEmpty(),
+    check("propertyType", "propertyType field is required").not().isEmpty(),
+    check("placeType", "placeType field is required").not().isEmpty(),
+    check("guests", "guests field is required").not().isEmpty(),
+    check("bedrooms", "bedrooms field is required").not().isEmpty(),
+    check("beds", "beds field is required").not().isEmpty(),
+    check("baths", "baths field is required").not().isEmpty(),
+    check("bedrooms", "bedrooms field is required").not().isEmpty(),
+    check("images", "images field isn't valid").isArray({ min: 5 }),
+    check("amenities", "amenities field isn't valid").isArray({ min: 1 }),
+    check("categories", "categories field isn't valid").isArray({ min: 1 }),
+  ],
+  async (req, res) => {
+    try {
+      if (!req.user.isAdmin && !req.user.isHost) {
+        return res
+          .status(401)
+          .send({ error: "Not authorized to access this resource" });
+      }
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).send({ errors: errors.array() });
+      }
+      const id = req.query.id;
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        const {
+          name,
+          description,
+          pricePerNight,
+          latitude,
+          longitude,
+          address,
+          propertyType,
+          placeType,
+          guests,
+          livings,
+          bedrooms,
+          beds,
+          baths,
+          amenities = [],
+          categories = [],
+          images = [],
+        } = req.body;
+        Room.findByIdAndUpdate(id,{
+          name,
+          description,
+          pricePerNight,
+          location: {
+            type: "Point",
+            coordinates: [-110.8571443, 32.4586858],
+            address,
+          },
+          propertyType,
+          placeType,
+          guests,
+          bedrooms,
+          livings,
+          beds,
+          baths,
+          amenities,
+          categories,
+          images,
+          owner: req.user._id,
+        })
+          .exec()
+          .then((room) => {
+            return res.status(200).json({
+              message: "Update Room successfully!",
+              room: room,
+            });
+          })
+          .catch((error) => {
+            return res.status(401).send({ error: error.message });
+          });
+      } else {
+        return res.status(401).send({
+          error: "Invalid id",
+        });
+      }
+    } catch (error) {
+      return res.status(401).send({ error: error.message });
+    }
+  }
+);
+
 // Get detail room
 router.get("/room", async (req, res) => {
   try {
