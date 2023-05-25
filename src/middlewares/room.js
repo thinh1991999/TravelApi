@@ -1,3 +1,7 @@
+const Booking = require("../models/Booking");
+const Room = require("../models/Room");
+const moment=require("moment")
+
 const validator = async (req, res, next) => {
   req.checkBody("title").notEmpty().withMessage("Title field is required");
   req
@@ -70,4 +74,128 @@ const validator = async (req, res, next) => {
     });
 };
 
-module.exports = { validator };
+const checkValidCheckout = async (req, res, next) => {
+  try {
+    const { checkin, checkout, adults, children, pets, room } = req.query;
+    const startDate = new Date(checkin);
+    const endDate =new Date(checkout);
+
+    const isValid = await Booking.find({
+      status:"DONE",
+      $or: [
+        {
+          checkIn: { $lt: endDate },
+          checkOut: { $gte: startDate },
+        },
+        {
+          checkIn: { $lte: startDate },
+          checkOut: { $gt: startDate },
+        },
+      ],
+    })
+      .then((bookings) => {
+        const bookedRoomIds = bookings.map((booking) => booking.room);
+        return Room.find({ _id: { $nin: bookedRoomIds } })
+          .populate("reviews")
+          .populate("bookings");
+      })
+      .then((availableRooms) => {
+        const checkIdx = availableRooms.findIndex((vl) => {
+          return vl._id.toString() === room;
+        });
+        
+        if (checkIdx === -1) return false;
+        req.room = availableRooms[checkIdx];
+        const { guests, isAllowBet, pricePerNight } = availableRooms[0];
+        const timeDiff = Math.abs(startDate.getTime() - endDate.getTime());
+        const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24))+1;
+        if(daysDiff<1) return false;
+        console.log(2);
+        if(!isAllowBet && pets*1>0) return false;
+        console.log(3);
+        const totalG = adults + children;
+        if (totalG<=0 && totalG>guests) return false;
+        console.log(4);
+        req.id = room;
+        req.checkin = startDate;
+        req.checkout = endDate;
+        req.totalPrice = daysDiff * pricePerNight;
+        req.adults = adults;
+        req.children = children;
+        req.pets = pets;
+        req.nights=daysDiff
+        req.pricePerNight = pricePerNight;
+        return true
+      });
+    if (isValid){
+      next();
+    }else{
+       return res.status(401).send({ error: "Invaid values" });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(401).send({ error: "Invaid values" });
+  }
+};
+
+const checkValidCheckoutFinal = async (req, res, next) => {
+  try {
+    const { checkin, checkout, adults, children, pets, room } = req.body;
+    const startDate = new Date(checkin);
+    const endDate = new Date(checkout);
+    const isValid = await Booking.find({
+      status: "DONE",
+      $or: [
+        {
+          checkIn: { $lt: endDate },
+          checkOut: { $gte: startDate },
+        },
+        {
+          checkIn: { $lte: startDate },
+          checkOut: { $gt: startDate },
+        },
+      ],
+    })
+      .then((bookings) => {
+        const bookedRoomIds = bookings.map((booking) => booking.room);
+        return Room.find({ _id: { $nin: bookedRoomIds } })
+          .populate("reviews")
+          .populate("bookings");
+      })
+      .then((availableRooms) => {
+        const checkIdx = availableRooms.findIndex((vl) => {
+          return vl._id.toString() === room;
+        });
+
+        if (checkIdx === -1) return false;
+        req.room = availableRooms[checkIdx];
+        const { guests, isAllowBet, pricePerNight } = availableRooms[0];
+        const timeDiff = Math.abs(startDate.getTime() - endDate.getTime());
+        const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+        if (daysDiff < 1) return false;
+        if (!isAllowBet && pets * 1 > 0) return false;
+        const totalG = adults + children;
+        if (totalG <= 0 && totalG > guests) return false;
+        req.id = room;
+        req.checkin = startDate;
+        req.checkout = endDate;
+        req.totalPrice = daysDiff * pricePerNight;
+        req.adults = adults;
+        req.children = children;
+        req.pets = pets;
+        req.nights = daysDiff;
+        req.pricePerNight = pricePerNight;
+        return true;
+      });
+    if (isValid) {
+      next();
+    } else {
+      return res.status(401).send({ error: "Invaid values" });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(401).send({ error: "Invaid values" });
+  }
+};
+
+module.exports = { validator, checkValidCheckout, checkValidCheckoutFinal };

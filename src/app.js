@@ -14,6 +14,7 @@ const reviewRoutes = require("./routes/reviewRoutes");
 const propertyTypeRoutes = require("./routes/propertyTypeRoutes");
 const typePlaceRoutes = require("./routes/typePlaceRoutes");
 const checkoutRouters = require("./routes/checkoutRoutes");
+const bookingRouters = require("./routes/bookingRoutes");
 
 const { connectDb } = require("./config/db");
 const startSocket = require("./socket/socket");
@@ -53,7 +54,7 @@ app.use(reviewRoutes);
 app.use(propertyTypeRoutes);
 app.use(typePlaceRoutes);
 app.use(checkoutRouters);
-
+app.use(bookingRouters);
 startSocket(io);
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);

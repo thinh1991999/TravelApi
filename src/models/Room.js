@@ -52,6 +52,11 @@ const roomSchema = new mongoose.Schema(
       required: true,
       min: 1,
     },
+    isAllowBet:{
+      type: Boolean,
+      required: false,
+      default:true
+    },
     bedrooms: {
       type: Number,
       required: true,

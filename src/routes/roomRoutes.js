@@ -202,33 +202,22 @@ router.get("/room", async (req, res) => {
     if (mongoose.isValidObjectId(id)) {
       Room.findById(id)
         .populate("propertyType")
+        .populate({
+          path: "bookings",
+          select: ["checkIn", "checkOut"],
+          match: { status: "DONE" },
+        })
+        .populate({
+          path: "owner",
+          select: ["email", "firstName", "lastName", "profilePic"],
+        })
         .exec()
         .then((room) => {
           if (room) {
-            const { owner } = room;
-            User.findById(owner)
-              .exec()
-              .then((user) => {
-                if (user) {
-                  const { email, firstName, lastName, profilePic } = user;
-                  return res.status(200).send({
-                    message: "Success",
-                    room: {
-                      room: room,
-                      owner: {
-                        email,
-                        firstName,
-                        lastName,
-                        profilePic,
-                      },
-                    },
-                  });
-                } else {
-                  return res.status(401).send({
-                    error: "Room not found",
-                  });
-                }
-              });
+            return res.status(200).send({
+              message: "Success",
+              room,
+            });
           } else {
             return res.status(401).send({
               error: "Room not found",
