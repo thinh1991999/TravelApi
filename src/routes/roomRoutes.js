@@ -261,6 +261,35 @@ router.get("/room/admin", async (req, res) => {
   }
 });
 
+router.delete("/room/delete",authAdmin, async (req, res) => {
+  try {
+    const id = req.query.id;
+    if (mongoose.isValidObjectId(id)) {
+      Room.findOneAndUpdate(
+        {
+          _id: id,
+        },
+        { isDelete: true },
+        { new: true }
+      ).then((room) => {
+        if (room) {
+          return res.status(200).send({
+            room,
+          });
+        } else {
+          return res.status(401).send({
+            error: "Room not found",
+          });
+        }
+      });
+    } else {
+      return res.status(401).send({ error: "Invalid id" });
+    }
+  } catch (error) {
+    return res.status(401).send({ error: error.message });
+  }
+});
+
 const options = {
   page: 1,
   limit: 10,

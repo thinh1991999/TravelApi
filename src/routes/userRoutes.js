@@ -111,6 +111,8 @@ router.post(
               }
             );
             let transporter = nodemailer.createTransport({
+              name: "mail.example.com",
+              secure: true,
               service: "gmail",
               auth: {
                 user: process.env.GMAIL_USER,
@@ -134,8 +136,8 @@ router.post(
                 } else {
                   transporter
                     .sendMail({
-                      from: "19130213@st.hcmuaf.edu.vn", // sender address
-                      to: "thinhtyt1999@gmail.com", // list of receivers
+                      from: process.env.GMAIL_USER, // sender address
+                      to: email, // list of receivers
                       subject: "Verify your account ✔", // Subject line
                       text: "Verify your account?", // plain text body
                       html: str, // html body
@@ -241,6 +243,8 @@ router.post("/user/forgot/pw", async (req, res) => {
           }
         );
         let transporter = nodemailer.createTransport({
+          name: "mail.example.com",
+          secure: true,
           service: "gmail",
           auth: {
             user: process.env.GMAIL_USER,
