@@ -39,7 +39,7 @@ const roomSchema = new mongoose.Schema(
         ref: "Category",
       },
     ],
-    placeType:  {
+    placeType: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "TypePlace",
     },
@@ -52,10 +52,10 @@ const roomSchema = new mongoose.Schema(
       required: true,
       min: 1,
     },
-    isAllowBet:{
+    isAllowBet: {
       type: Boolean,
       required: false,
-      default:true
+      default: true,
     },
     bedrooms: {
       type: Number,
@@ -67,7 +67,7 @@ const roomSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
-    livings: {
+    livingRooms: {
       type: Number,
       required: true,
       min: 0,
@@ -95,7 +95,7 @@ const roomSchema = new mongoose.Schema(
     },
     isDeleted: {
       type: Boolean,
-      default:false
+      default: false,
     },
     bookings: [
       {
