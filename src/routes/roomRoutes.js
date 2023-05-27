@@ -270,7 +270,7 @@ router.delete("/room/delete", authAdmin, async (req, res) => {
         {
           _id: id,
         },
-        { isDelete: true },
+        { isDeleted: true },
         { new: true }
       ).then((room) => {
         if (room) {
@@ -307,7 +307,7 @@ const options = {
 
 router.get("/room/all", async (req, res) => {
   try {
-    Room.paginate({}, options, function (err, result) {
+    Room.paginate({ isDeleted: false }, options, function (err, result) {
       return res.status(200).send({
         err,
         result,
