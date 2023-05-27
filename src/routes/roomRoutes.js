@@ -333,6 +333,7 @@ router.get("/room/filter/count", async (req, res) => {
     } = req.query;
     find = {
       pricePerNight: { $lte: maxPrice, $gte: minPrice },
+      isDeleted: false,
     };
     if (amenities.length > 0) {
       find = {
@@ -386,6 +387,7 @@ router.get("/room/filter", async (req, res) => {
     } = req.query;
     find = {
       pricePerNight: { $lte: maxPrice, $gte: minPrice },
+      isDeleted: false,
     };
     if (amenities.length > 0) {
       find = {
@@ -432,6 +434,7 @@ router.get("/room/name/match", async (req, res) => {
   try {
     const name = req.query.name;
     Room.find({
+      isDeleted: false,
       $or: [
         { name: { $regex: name } },
         {
