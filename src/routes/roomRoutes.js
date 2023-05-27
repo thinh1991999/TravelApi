@@ -214,6 +214,7 @@ router.get("/room", async (req, res) => {
           path: "owner",
           select: ["email", "firstName", "lastName", "profilePic"],
         })
+        .populate("reviews")
         .exec()
         .then((room) => {
           if (room) {
@@ -261,7 +262,7 @@ router.get("/room/admin", async (req, res) => {
   }
 });
 
-router.delete("/room/delete",authAdmin, async (req, res) => {
+router.delete("/room/delete", authAdmin, async (req, res) => {
   try {
     const id = req.query.id;
     if (mongoose.isValidObjectId(id)) {
@@ -331,8 +332,7 @@ router.get("/room/filter/count", async (req, res) => {
       places = [],
     } = req.query;
     find = {
-      pricePerNight: { $lte: maxPrice },
-      pricePerNight: { $gte: minPrice },
+      pricePerNight: { $lte: maxPrice, $gte: minPrice },
     };
     if (amenities.length > 0) {
       find = {
@@ -352,6 +352,7 @@ router.get("/room/filter/count", async (req, res) => {
         placeType: { $all: places },
       };
     }
+    console.log(find);
     Room.find({
       ...find,
       ...decodeFilterCountRoom("baths", bathRooms),
@@ -384,8 +385,7 @@ router.get("/room/filter", async (req, res) => {
       places = [],
     } = req.query;
     find = {
-      pricePerNight: { $gte: minPrice },
-      pricePerNight: { $lte: maxPrice },
+      pricePerNight: { $lte: maxPrice, $gte: minPrice },
     };
     if (amenities.length > 0) {
       find = {
@@ -410,6 +410,36 @@ router.get("/room/filter", async (req, res) => {
       ...decodeFilterCountRoom("baths", bathRooms),
       ...decodeFilterCountRoom("bedrooms", bedRooms),
       ...decodeFilterCountRoom("beds", beds),
+    })
+      .populate("reviews")
+      .populate({
+        path: "owner",
+        select: ["_id", "firstName", "lastName", "profilePic"],
+      })
+      .exec()
+      .then((rooms) => {
+        return res.status(200).send({ rooms: rooms });
+      })
+      .catch((err) => {
+        return res.status(200).send({ rooms: [] });
+      });
+  } catch (error) {
+    return res.status(401).send({ error: error.message });
+  }
+});
+
+router.get("/room/name/match", async (req, res) => {
+  try {
+    const name = req.query.name;
+    Room.find({
+      $or: [
+        { name: { $regex: name } },
+        {
+          location: {
+            address: { $regex: name },
+          },
+        },
+      ],
     })
       .populate("reviews")
       .populate({

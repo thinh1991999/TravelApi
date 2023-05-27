@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Booking = require("../models/Booking");
 const { auth } = require("../middlewares/auth");
 const { check, validationResult } = require("express-validator");
 const { multerUploads, uploadToStorage } = require("../middlewares/multer");
@@ -393,6 +394,28 @@ router.post("/user/login", async (req, res) => {
 // Detail user
 router.get("/users/me", auth, async (req, res) => {
   return res.send(req.user);
+});
+
+// get booking history
+router.get("/users/me/bookings", auth, async (req, res) => {
+  try {
+    const id = req.user._id;
+    Booking.find({
+      user: id,
+    })
+      .populate("room")
+      .then((bookings) => {
+        if (bookings) {
+          return res.status(200).send({ mess: "Success", bookings });
+        } else {
+          return res.status(200).send({ mess: "Success", booking: [] });
+        }
+      });
+  } catch (error) {
+    res.status(500).send({
+      error: error.message,
+    });
+  }
 });
 
 // Logout
